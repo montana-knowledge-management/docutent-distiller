@@ -37,12 +37,6 @@ jobs:
       - run: poetry install
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
-      - name: Cache input data
-        uses: actions/cache@v2.1.6
-        with:
-          path: /home/runner/work/wk-2022-1/wk-2022-1/tests/workDir
-          key: ${{ runner.os }}-${{ hashFiles('$WKROOT') }}
-
       - name: Test
         run: |
           poetry run coverage run --module pytest
