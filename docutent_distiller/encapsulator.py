@@ -102,7 +102,7 @@ class Encapsulator:
     Server for running a custom project as an API.
     """
 
-    def __init__(self, project):
+    def __init__(self, project: MachineLearningProject):
         """
         :param project: either MachineLearningProject or SimulationProject instance
         """
