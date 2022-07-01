@@ -14,8 +14,6 @@ from importlib_resources import files
 from pydantic import BaseModel, Extra
 
 from docutent_distiller.ml_project import MachineLearningProject
-from docutent_distiller.modelpaths import ModelDir
-from docutent_distiller.simulationproject import SimulationProject
 
 
 class InputJsonML(BaseModel):
@@ -24,27 +22,6 @@ class InputJsonML(BaseModel):
     """
 
     text: str
-
-    # Setting for keeping the additional keys in the input json intact
-    class Config:
-        extra = Extra.allow
-
-
-class InputJsonSim(BaseModel):
-    """
-    Class for validating the input sent to the /process endpoint for SimulationProject.
-    """
-
-    simulation: Optional[dict] = {"type": "default"}
-    model: Optional[dict] = {}
-    tolerances: Optional[dict] = {
-        "type": "ff",
-        "parameters": {},
-        "variables": [],
-    }
-    misc: Optional[dict] = {"processes": 4, "cleanup": True, "exportname": None}
-    # TODO: get this version number from poetry, what do we want from this version
-    version: Optional[str] = "2021.12"
 
     # Setting for keeping the additional keys in the input json intact
     class Config:
@@ -88,29 +65,7 @@ tags_metadata = [
 ]
 
 
-@app.post("/process_sim", include_in_schema=True, tags=["process_sim"])
-async def process_sim(item: InputJsonSim):
-    """
-    Endpoint for performing the project.run() method on data sent for the API in JSON format.
-    The endpoint performs automatic input validation via the Item class.
-    """
-    data = json.loads(item.json())
-    app.project._output.clear()
-    try:
-        app.project._input = data
-        app.project.update_input()
-        app.project.run()
-    except Exception as e:
-        app.project._output["exception"] = {
-            "type": e.__class__.__name__,
-            "message": str(e),
-            "traceback": traceback.format_exc(),
-        }
-    finally:
-        return app.project._output
-
-
-@app.post("/process_ml", include_in_schema=True, tags=["process_ml"])
+@app.post("/process", include_in_schema=True, tags=["process_ml"])
 async def process_ml(item: InputJsonML):
     """
     Endpoint for performing the project.run() method on data sent for the API in JSON format.
@@ -153,7 +108,7 @@ class Encapsulator:
         """
         self.app = app
         self.app.doc_templates = Jinja2Templates(
-            directory=files("digital_twin_distiller") / "resources" / "doc_template" / "site"
+            directory=files("docutent_distiller") / "resources" / "doc_template" / "site"
         )
         self.app.project = project
         self.app.title = self.app.title.format(project.app_name)
@@ -163,7 +118,7 @@ class Encapsulator:
         self.cert_file_path = None
         self.key_file_path = None
 
-        self.set_project_mkdocs_dir_path(ModelDir.DOCS)
+        # self.set_project_mkdocs_dir_path(ModelDir.DOCS)
 
     def set_cert_file_path(self, cert_file_path):
         self.cert_file_path = cert_file_path
@@ -200,10 +155,10 @@ class Encapsulator:
         Build the documentation with mkdocs.
         """
         cwd = Path(os.getcwd())
-        os.chdir(ModelDir.DOCS)
+        # os.chdir(ModelDir.DOCS)
         subprocess.run("mkdocs build", shell=True, check=True)
         os.chdir(cwd)
-        (ModelDir.DOCS / "site" / "images").resolve().mkdir(exist_ok=True)
+        # (ModelDir.DOCS / "site" / "images").resolve().mkdir(exist_ok=True)
 
     def set_host(self, host: str):
         """

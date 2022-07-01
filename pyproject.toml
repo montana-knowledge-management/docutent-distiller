@@ -28,6 +28,7 @@ fastapi = "^0.78.0"
 uvicorn = "^0.18.2"
 matplotlib = "^3.5.2"
 fasttext = "^0.9.2"
+Jinja2 = "^3.1.2"
 # list all devtools here
 [tool.poetry.dev-dependencies]
 black = "*"
@@ -65,7 +66,7 @@ quiet = true
 
 [tool.coverage.run]
 command_line = "-m py.test"
-source = ['src']
+source = ['docutent_distiller']
 branch = true
 # omit = []
 
