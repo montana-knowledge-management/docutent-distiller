@@ -22,16 +22,27 @@ jobs:
         uses: actions/setup-python@v2.2.2
         with:
           python-version: ${{ matrix.python }}
-      - name: Install
+      - name: Install poetry
         run: |
           python -m pip install --upgrade pip
           python -m pip install poetry
-          python -m poetry install
-      - uses: actions/cache@v2.1.6
+      - uses: syphar/restore-virtualenv@v1
+        id: cache-virtualenv
         with:
-          path: ~/.cache/pip
-          key: ${{ matrix.os }}-pip-${{ secrets.CACHE_SEED }}-${{ matrix.python }}-${{ hashFiles('./poetry.lock') }}
-          restore-keys: ${{ matrix.os }}-pip-${{ secrets.CACHE_SEED }}-${{ matrix.python }}-
+          requirement_files: poetry.lock
+
+      - uses: syphar/restore-pip-download-cache@v1
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+
+      - run: poetry install
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+
+      - name: Cache input data
+        uses: actions/cache@v2.1.6
+        with:
+          path: /home/runner/work/wk-2022-1/wk-2022-1/tests/workDir
+          key: ${{ runner.os }}-${{ hashFiles('$WKROOT') }}
+
       - name: Test
         run: |
           poetry run coverage run --module pytest
@@ -44,3 +55,4 @@ jobs:
           name: codecov-umbrella # optional
           fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)
+          token: ${{secrets.CODECOV_TOKEN}}
