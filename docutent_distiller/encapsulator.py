@@ -105,14 +105,16 @@ class Encapsulator:
     def set_key_file_path(self, key_file_path):
         self.key_file_path = key_file_path
 
-    def set_endpoint_for_docs(self, docs_path, endpoint="/"):
+    def set_endpoint_for_docs(self, docs_path, endpoint="/", build=True):
         """
         Builds mkdocs documentation and deploys the documentation at the given endpoint.
         :param docs_path: path to the docs folder containing mkdocs.yml
         :param endpoint: endpoint to publish built docs to
+        :param build: whether to build documentation or not
         :return:
         """
-        self.build_docs(docs_path)
+        if build:
+            self.build_docs(docs_path)
         site_path = Path(docs_path).joinpath("site")
         self.app.mount(endpoint, StaticFiles(directory=site_path, html=True, check_dir=True), name="documentation")
 
