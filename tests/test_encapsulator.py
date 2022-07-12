@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 
 from docutent_distiller.encapsulator import Encapsulator
 from docutent_distiller.ml_project import MachineLearningProject
+from importlib_resources import files
 
 
 class DummyMLandSimulationProject(MachineLearningProject):
@@ -21,6 +22,7 @@ class TestEncapsulator(unittest.TestCase):
     # HTTP client
     example_project = DummyMLandSimulationProject(app_name="test_name")
     server = Encapsulator(example_project)
+    server.set_endpoint_for_docs(files("docutent_distiller") / "docs")
     client = TestClient(server.app)
 
     # HTTPS client
@@ -34,9 +36,9 @@ class TestEncapsulator(unittest.TestCase):
         self.assertEqual(response.json()["msg"], "The API is working.")
         self.assertIn("call_time", response.json())
 
-    # def test_http_root(self):
-    #     response = self.client.get("/")
-    #     self.assertEqual(response.status_code, 200)
+    def test_http_root(self):
+        response = self.client.get("/")
+        self.assertEqual(response.status_code, 200)
 
     def test_server(self):
         self.assertEqual(self.server.host, "127.0.0.1")
@@ -74,10 +76,3 @@ class TestEncapsulator(unittest.TestCase):
         example_port = 123
         self.server.set_port(example_port)
         self.assertEqual(self.server.port, example_port)
-
-    def test_asset_not_exists(self):
-        with self.assertRaises(FileNotFoundError) as context:
-            self.server.set_project_mkdocs_dir_path(".")
-            self.assertIn(
-                'please build the mkdocs site by calling "mkdocs build" in the docs directory', context.exception
-            )
