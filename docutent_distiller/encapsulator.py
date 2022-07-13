@@ -126,6 +126,7 @@ class Encapsulator:
         os.chdir(docs_path)
         subprocess.run("mkdocs build", shell=True, check=True)
         os.chdir(cwd)
+        (docs_path / "site" / "images").resolve().mkdir(exist_ok=True)
 
     def set_host(self, host: str):
         """
