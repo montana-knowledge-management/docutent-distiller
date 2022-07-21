@@ -1,6 +1,6 @@
 # Main package description
 [tool.poetry]
-name = "<PACKAGENAME>"
+name = "docutent_distiller"
 version = "0.1.0"
 description = "<DESCRIPTION>"
 authors = [
