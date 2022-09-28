@@ -176,7 +176,6 @@ class PuLearning(AbstractTask):
         if plot:
             plt.hist(predicted_probs_p, bins=50, range=(0, 1), color="red", alpha=0.5, label="Members of P dataset")
             plt.hist(predicted_probs_u, bins=50, range=(0, 1), color="blue", alpha=0.5, label="Members of U dataset")
-            plt.hist(predicted_probs_u, bins=50, range=(0, 1), color="blue", alpha=0.5, label="Members of U dataset")
             plt.axvline(x=threshold, color="green", label="Threshold")
             plt.legend(loc='upper right')
             plt.xlabel("Probabilities given by the non-traditional classifier")
