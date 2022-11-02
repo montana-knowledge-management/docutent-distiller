@@ -1,10 +1,11 @@
 import unittest
+from os import remove
+from os.path import exists
 
 import numpy as np
-from os.path import exists
-from docutent_distiller.document_vectorizer import DocumentVectorizer
-from os import remove
 import pytest
+
+from docutent_distiller.document_vectorizer import DocumentVectorizer
 
 example_text = ["teszt szöveg első fele.", "második teszt dokumentum ami az első fele folytatása."]
 
@@ -13,15 +14,17 @@ example_test = ["teszt elem amit még nem látott a modell"]
 
 class DummyFasttextModel:
     def __init__(self):
-        self.word_vectors = {'teszt': np.array([-0.31889972, -0.32168077, -0.43845435, -0.05013237, 0.6502505]),
-                             'szöveg': np.array([-0.24492963, -0.17807408, -0.23365464, -0.21707366, -0.33084135]),
-                             'első': np.array([-0.0821762, -0.1395661, 0.29812188, 0.71711501, 0.00625835]),
-                             'fele': np.array([-0.40292474, 0.10488187, 0.82989296, -0.39019406, 0.17262902]),
-                             'második': np.array([-0.21978395, -0.19596792, 0.08622615, 0.19335617, -0.12503032]),
-                             'dokumentum': np.array([-0.18175753, -0.22389043, -0.20449593, -0.12305195, -0.2462691]),
-                             'ami': np.array([-0.17623963, 1.1600889, -0.2423223, 0.06445429, 0.0164192]),
-                             'az': np.array([1.84987635, -0.01960656, 0.03841505, -0.086517, 0.04585048]),
-                             'folytatása': np.array([-0.22316495, -0.18618491, -0.13372884, -0.10795644, -0.18926679])}
+        self.word_vectors = {
+            "teszt": np.array([-0.31889972, -0.32168077, -0.43845435, -0.05013237, 0.6502505]),
+            "szöveg": np.array([-0.24492963, -0.17807408, -0.23365464, -0.21707366, -0.33084135]),
+            "első": np.array([-0.0821762, -0.1395661, 0.29812188, 0.71711501, 0.00625835]),
+            "fele": np.array([-0.40292474, 0.10488187, 0.82989296, -0.39019406, 0.17262902]),
+            "második": np.array([-0.21978395, -0.19596792, 0.08622615, 0.19335617, -0.12503032]),
+            "dokumentum": np.array([-0.18175753, -0.22389043, -0.20449593, -0.12305195, -0.2462691]),
+            "ami": np.array([-0.17623963, 1.1600889, -0.2423223, 0.06445429, 0.0164192]),
+            "az": np.array([1.84987635, -0.01960656, 0.03841505, -0.086517, 0.04585048]),
+            "folytatása": np.array([-0.22316495, -0.18618491, -0.13372884, -0.10795644, -0.18926679]),
+        }
 
     def get_word_vector(self, word):
         return self.word_vectors.get(word)
@@ -29,15 +32,17 @@ class DummyFasttextModel:
 
 class DummyW2VModel:
     def __init__(self):
-        self.wv = {'teszt': np.array([-0.31889972, -0.32168077, -0.43845435, -0.05013237, 0.6502505]),
-                   'szöveg': np.array([-0.24492963, -0.17807408, -0.23365464, -0.21707366, -0.33084135]),
-                   'első': np.array([-0.0821762, -0.1395661, 0.29812188, 0.71711501, 0.00625835]),
-                   'fele': np.array([-0.40292474, 0.10488187, 0.82989296, -0.39019406, 0.17262902]),
-                   'második': np.array([-0.21978395, -0.19596792, 0.08622615, 0.19335617, -0.12503032]),
-                   'dokumentum': np.array([-0.18175753, -0.22389043, -0.20449593, -0.12305195, -0.2462691]),
-                   'ami': np.array([-0.17623963, 1.1600889, -0.2423223, 0.06445429, 0.0164192]),
-                   'az': np.array([1.84987635, -0.01960656, 0.03841505, -0.086517, 0.04585048]),
-                   'folytatása': np.array([-0.22316495, -0.18618491, -0.13372884, -0.10795644, -0.18926679])}
+        self.wv = {
+            "teszt": np.array([-0.31889972, -0.32168077, -0.43845435, -0.05013237, 0.6502505]),
+            "szöveg": np.array([-0.24492963, -0.17807408, -0.23365464, -0.21707366, -0.33084135]),
+            "első": np.array([-0.0821762, -0.1395661, 0.29812188, 0.71711501, 0.00625835]),
+            "fele": np.array([-0.40292474, 0.10488187, 0.82989296, -0.39019406, 0.17262902]),
+            "második": np.array([-0.21978395, -0.19596792, 0.08622615, 0.19335617, -0.12503032]),
+            "dokumentum": np.array([-0.18175753, -0.22389043, -0.20449593, -0.12305195, -0.2462691]),
+            "ami": np.array([-0.17623963, 1.1600889, -0.2423223, 0.06445429, 0.0164192]),
+            "az": np.array([1.84987635, -0.01960656, 0.03841505, -0.086517, 0.04585048]),
+            "folytatása": np.array([-0.22316495, -0.18618491, -0.13372884, -0.10795644, -0.18926679]),
+        }
 
     def get_word_vector(self, word):
         return self.word_vectors.get(word)
@@ -109,8 +114,9 @@ class DocumentVectorizerTestCase(unittest.TestCase):
     def test_docvec(self):
         model_path_to_save = "/tmp/test.bin"
         vectorizer = DocumentVectorizer()
-        trained_model = vectorizer.train_doc2vec_model(corpus=example_text, model_path_to_save=model_path_to_save,
-                                                       vector_size=50, epochs=100, min_count=1)
+        trained_model = vectorizer.train_doc2vec_model(
+            corpus=example_text, model_path_to_save=model_path_to_save, vector_size=50, epochs=100, min_count=1
+        )
         self.assertTrue(exists(model_path_to_save))
 
         vectorizer = DocumentVectorizer()
@@ -138,14 +144,17 @@ class DocumentVectorizerTestCase(unittest.TestCase):
 
         with self.assertRaises(ValueError) as context:
             vectorizer.keep_n_most_similar_to_average([""], mode="notimplemented")
-            self.assertEqual(context,
-                             'The mode is currently not implemented, please choose from "average" and "idf_weighted"!')
+            self.assertEqual(
+                context, 'The mode is currently not implemented, please choose from "average" and "idf_weighted"!'
+            )
 
         example_tokenized = [txt.replace(".", "") for txt in example_text[0].split() if txt]
-        mean_of_most_similar = vectorizer.keep_n_most_similar_to_average(example_tokenized, nr_of_words_to_keep=2,
-                                                                         mode="average")
+        mean_of_most_similar = vectorizer.keep_n_most_similar_to_average(
+            example_tokenized, nr_of_words_to_keep=2, mode="average"
+        )
         szoveg_elso_vec_lst = np.array(
-            [vectorizer.fasttext_model.word_vectors.get("szöveg"), vectorizer.fasttext_model.word_vectors.get("első")])
+            [vectorizer.fasttext_model.word_vectors.get("szöveg"), vectorizer.fasttext_model.word_vectors.get("első")]
+        )
         # asserting that the words szöveg and első are the closest two to the mean vector
         self.assertListEqual(mean_of_most_similar.tolist(), szoveg_elso_vec_lst.mean(axis=0).tolist())
 
@@ -157,16 +166,22 @@ class DocumentVectorizerTestCase(unittest.TestCase):
         vectorizer.build_vocab(example_text)
 
         example_tokenized = [txt.replace(".", "") for txt in example_text[0].split() if txt]
-        mean_of_most_similar = vectorizer.keep_n_most_similar_to_average(example_tokenized, nr_of_words_to_keep=2,
-                                                                         mode="idf_weighted")
+        mean_of_most_similar = vectorizer.keep_n_most_similar_to_average(
+            example_tokenized, nr_of_words_to_keep=2, mode="idf_weighted"
+        )
         szoveg_elso_vec_lst = np.array(
-            [vectorizer.fasttext_model.word_vectors.get("szöveg") * vectorizer.idf[vectorizer.vocabulary.get("szöveg")],
-             vectorizer.fasttext_model.word_vectors.get("első") * vectorizer.idf[vectorizer.vocabulary.get("első")]])
+            [
+                vectorizer.fasttext_model.word_vectors.get("szöveg")
+                * vectorizer.idf[vectorizer.vocabulary.get("szöveg")],
+                vectorizer.fasttext_model.word_vectors.get("első") * vectorizer.idf[vectorizer.vocabulary.get("első")],
+            ]
+        )
         # asserting that the words szöveg and első are the closest two to the mean vector
         self.assertListEqual(mean_of_most_similar.tolist(), szoveg_elso_vec_lst.mean(axis=0).tolist())
 
-        mean_of_most_similar_avg = vectorizer.keep_n_most_similar_to_average(example_tokenized, nr_of_words_to_keep=2,
-                                                                             mode="average")
+        mean_of_most_similar_avg = vectorizer.keep_n_most_similar_to_average(
+            example_tokenized, nr_of_words_to_keep=2, mode="average"
+        )
         # checking if idf vectors and avg vectors are different
         self.assertNotEqual(mean_of_most_similar_avg.mean(), mean_of_most_similar.mean())
 
@@ -186,8 +201,10 @@ class DocumentVectorizerTestCase(unittest.TestCase):
         vectorizer.vectors_dict = None
         vectorizer.load_vectors_dictionary(path_to_save)
         print(vectorizer.vectors_dict)
-        self.assertEqual(vectorizer.vectors_dict.get("szöveg").tolist(),
-                         vectorizer.fasttext_model.word_vectors.get("szöveg").tolist())
+        self.assertEqual(
+            vectorizer.vectors_dict.get("szöveg").tolist(),
+            vectorizer.fasttext_model.word_vectors.get("szöveg").tolist(),
+        )
         # cleaning up
         remove(path_to_save)
         self.assertFalse(exists(path_to_save))
@@ -222,8 +239,10 @@ class DocumentVectorizerTestCase(unittest.TestCase):
         vectorizer.vocabulary = set(vocab)
         vectorizer.build_vectors_dict(mode="gensim")
         captured = self.capsys.readouterr()
-        self.assertEqual(captured.out.replace("\n", ""),
-                         "The word pentakosziomedimnosz was missing from the gensim model, not putting into vectors dict.")
+        self.assertEqual(
+            captured.out.replace("\n", ""),
+            "The word pentakosziomedimnosz was missing from the gensim model, not putting into vectors dict.",
+        )
 
     def test_average_idf_multidoc(self):
         vectorizer = DocumentVectorizer()
@@ -247,8 +266,9 @@ class DocumentVectorizerTestCase(unittest.TestCase):
     def test_docvec_multidoc(self):
         model_path_to_save = "/tmp/test.bin"
         vectorizer = DocumentVectorizer()
-        trained_model = vectorizer.train_doc2vec_model(corpus=example_text, model_path_to_save=model_path_to_save,
-                                                       vector_size=50, epochs=100, min_count=1)
+        trained_model = vectorizer.train_doc2vec_model(
+            corpus=example_text, model_path_to_save=model_path_to_save, vector_size=50, epochs=100, min_count=1
+        )
         self.assertTrue(exists(model_path_to_save))
 
         vectorizer = DocumentVectorizer()
@@ -271,5 +291,5 @@ class DocumentVectorizerTestCase(unittest.TestCase):
         self.assertEqual(len(document_vector), 2)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

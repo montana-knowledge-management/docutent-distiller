@@ -1,6 +1,5 @@
 import unittest
-from os import path
-from os import remove
+from os import path, remove
 from zipfile import ZipFile
 
 from docutent_distiller.data_snapshot import DataSnapshot
