@@ -4,17 +4,19 @@ Positive and unlabeled learning based on Elkan and Noto: Learning Classifiers fr
 The dataset is available from http://cseweb.ucsd.edu/~elkan/posonly/.
 However, the examples were modified to use the twenty newsgroups dataset.
 """
-from docutent_distiller.ml_project import AbstractTask
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-from importlib_resources import files
-from docutent_distiller.data_snapshot import DataSnapshot
 import os
-import scipy
-from sklearn.model_selection import StratifiedKFold
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
+import scipy
+from importlib_resources import files
 from sklearn.datasets import fetch_20newsgroups
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import StratifiedKFold
+from sklearn.svm import SVC
+
+from docutent_distiller.data_snapshot import DataSnapshot
+from docutent_distiller.ml_project import AbstractTask
 
 
 class PuLearning(AbstractTask):
@@ -44,20 +46,23 @@ class PuLearning(AbstractTask):
         """
         if model not in ["lr", "svc"] and not isinstance(model, str):
 
-            if hasattr(model, 'fit') and hasattr(model, 'predict_proba'):
-                if hasattr(model, 'random_state'):
+            if hasattr(model, "fit") and hasattr(model, "predict_proba"):
+                if hasattr(model, "random_state"):
                     model.random_state = random_state
                 custom_model = model
             else:
                 raise NotImplementedError(
-                    "Please use a model where both 'fit' and 'predict_proba' functions are implemented!")
+                    "Please use a model where both 'fit' and 'predict_proba' functions are implemented!"
+                )
         elif model == "lr":
             custom_model = LogisticRegression(**self.lr_model_settings, random_state=random_state)
         elif model == "svc":
             custom_model = SVC(**self.svc_model_settings, random_state=random_state)
         else:
-            raise ValueError("Wrong model type given. Please choose from ['lr','svc'] or use a model object where the "
-                             "'fit' and 'predict_proba' functions are implemented!")
+            raise ValueError(
+                "Wrong model type given. Please choose from ['lr','svc'] or use a model object where the "
+                "'fit' and 'predict_proba' functions are implemented!"
+            )
         return custom_model
 
     # def load_example_dataset(self):
@@ -80,8 +85,8 @@ class PuLearning(AbstractTask):
         Loads example dataset from sklearn 20 newsgroups dataset.
         :return:
         """
-        self.P = fetch_20newsgroups(subset='train', categories=["rec.autos"]).data
-        self.Q = fetch_20newsgroups(subset='test', categories=["rec.autos"]).data
+        self.P = fetch_20newsgroups(subset="train", categories=["rec.autos"]).data
+        self.Q = fetch_20newsgroups(subset="test", categories=["rec.autos"]).data
         self.N = fetch_20newsgroups(subset="all", categories=["rec.motorcycles"]).data
         self.U = self.Q + self.N
         self.real_c = len(self.P) / (len(self.P) + len(self.Q))
@@ -104,8 +109,10 @@ class PuLearning(AbstractTask):
             X = np.concatenate((P, U), axis=0)
             y = [1] * len(P) + [0] * len(U)
         else:
-            raise ValueError("P and U are not the following types: list, numpy.ndarray, scipy.sparse.csr.csr_matrix,"
-                             " or P and U are not the same types.")
+            raise ValueError(
+                "P and U are not the following types: list, numpy.ndarray, scipy.sparse.csr.csr_matrix,"
+                " or P and U are not the same types."
+            )
         y = np.array(y)
         return X, y
 
@@ -144,8 +151,9 @@ class PuLearning(AbstractTask):
 
         return predicted_probs_p, predicted_probs_u
 
-    def get_potential_positives(self, P: list, U: list, threshold=None, model="lr", n_splits=10,
-                                random_state=None, plot=False):
+    def get_potential_positives(
+        self, P: list, U: list, threshold=None, model="lr", n_splits=10, random_state=None, plot=False
+    ):
         """
         Returns the indices if potentially positive data from the U dataset. To achieve this the threshold 0.5c is used
         where c is the estimated probability of a positive sample being labeled. If threshold is set manually, it is
@@ -178,7 +186,7 @@ class PuLearning(AbstractTask):
             plt.hist(predicted_probs_u, bins=50, range=(0, 1), color="blue", alpha=0.5, label="Members of U dataset")
             plt.hist(predicted_probs_u, bins=50, range=(0, 1), color="blue", alpha=0.5, label="Members of U dataset")
             plt.axvline(x=threshold, color="green", label="Threshold")
-            plt.legend(loc='upper right')
+            plt.legend(loc="upper right")
             plt.xlabel("Probabilities given by the non-traditional classifier")
             plt.ylabel("Count of documents (pcs)")
             plt.show()
@@ -208,7 +216,7 @@ class PuLearning(AbstractTask):
         # avoiding division by zero
         if len(true_indices) > 0:
             c = sum(true_predictions) / len(true_indices)
-            print("Averaged on {} predictions, c is: {:.2f}%.".format(len(true_indices), c * 100))
+            print(f"Averaged on {len(true_indices)} predictions, c is: {c * 100:.2f}%.")
         else:
             raise ValueError("Validation set is empty!")
         return c
@@ -241,7 +249,7 @@ class PuLearning(AbstractTask):
         results = np.array(results)
         c_avg = np.average(results)
         c_std = np.std(results)
-        print("Average of c: {:.2f}% ({:.2f})%".format(c_avg * 100, c_std * 100))
+        print(f"Average of c: {c_avg * 100:.2f}% ({c_std * 100:.2f})%")
         self.c = c_avg
         return self.c
 

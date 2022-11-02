@@ -4,10 +4,10 @@ import socket
 from abc import abstractmethod
 
 import pkg_resources
+from pydantic import BaseModel
 
 import docutent_distiller.text_readers as rdr
 from docutent_distiller.keywords import JSON, PDF, TXT
-from pydantic import BaseModel
 
 supported_extensions = [JSON, TXT, PDF]
 
@@ -16,6 +16,7 @@ class InputJson(BaseModel):
     """
     Class for validating the input sent to the /process endpoint for MachineLearningProject.
     """
+
     text: str
 
 

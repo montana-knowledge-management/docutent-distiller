@@ -1,9 +1,10 @@
 import unittest
+
 from fastapi.testclient import TestClient
+from importlib_resources import files
 
 from docutent_distiller.encapsulator import Encapsulator
 from docutent_distiller.ml_project import MachineLearningProject
-from importlib_resources import files
 
 
 class DummyMLandSimulationProject(MachineLearningProject):
@@ -36,8 +37,11 @@ class TestEncapsulator(unittest.TestCase):
         self.assertIsNot(response.status_code, 200)
         self.assertDictEqual(
             response.json(),
-            {'status': 'failed', 'error': 'ValidationError',
-             'detail': [{'loc': ['text'], 'msg': 'field required', 'type': 'value_error.missing'}]},
+            {
+                "status": "failed",
+                "error": "ValidationError",
+                "detail": [{"loc": ["text"], "msg": "field required", "type": "value_error.missing"}],
+            },
         )
 
     def test_http_ping(self):
@@ -63,8 +67,11 @@ class TestEncapsulator(unittest.TestCase):
         self.assertIsNot(response.status_code, 200)
         self.assertDictEqual(
             response.json(),
-            {'status': 'failed', 'error': 'ValidationError',
-             'detail': [{'loc': ['text'], 'msg': 'field required', 'type': 'value_error.missing'}]},
+            {
+                "status": "failed",
+                "error": "ValidationError",
+                "detail": [{"loc": ["text"], "msg": "field required", "type": "value_error.missing"}],
+            },
         )
 
     def test_with_text_key_ml(self):

@@ -1,14 +1,15 @@
+import fasttext
 import numpy
 import numpy as np
-from docutent_distiller.ml_project import AbstractTask
-import fasttext
 from gensim.models import FastText, Word2Vec
+from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from importlib_resources import files
-from docutent_distiller.text_readers import JsonReader
-from docutent_distiller.text_writers import JsonWriter
 from sklearn.feature_extraction.text import TfidfVectorizer
 from tqdm import tqdm
-from gensim.models.doc2vec import TaggedDocument, Doc2Vec
+
+from docutent_distiller.ml_project import AbstractTask
+from docutent_distiller.text_readers import JsonReader
+from docutent_distiller.text_writers import JsonWriter
 
 
 class DocumentVectorizer(AbstractTask):
@@ -99,8 +100,7 @@ class DocumentVectorizer(AbstractTask):
                         word_vector = self.gensim_model.wv[word]
                         self.vectors_dict[word] = word_vector
                     except KeyError:
-                        print("The word {} was missing from the gensim model, not putting into vectors dict.".format(
-                            word))
+                        print(f"The word {word} was missing from the gensim model, not putting into vectors dict.")
 
         elif mode == "fasttext":
             if not self.fasttext_model:

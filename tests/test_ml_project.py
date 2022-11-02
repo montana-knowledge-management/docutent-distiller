@@ -21,19 +21,21 @@ class TestMLProject(unittest.TestCase):
             """
             Class for validating the input sent to the /process endpoint for MachineLearningProject.
             """
+
             example: str
 
         project = mlp.MachineLearningProject(valid_class=InputJson)
         with self.assertRaises(ValidationError) as context:
             response = project.validate({"text": "random bs"})
 
-        self.assertTrue('example' in str(context.exception))
+        self.assertTrue("example" in str(context.exception))
 
     def test_validate_modified_class(self):
         class InputValidator(BaseModel):
             """
             Class for validating the input sent to the /process endpoint for MachineLearningProject.
             """
+
             example_2: str
 
         project = mlp.MachineLearningProject()
@@ -41,7 +43,7 @@ class TestMLProject(unittest.TestCase):
         with self.assertRaises(ValidationError) as context:
             response = project.validate({"text": "random bs"})
 
-        self.assertTrue('example_2' in str(context.exception))
+        self.assertTrue("example_2" in str(context.exception))
 
         response = project.validate({"example_2": "random bs"})
         self.assertEqual("random bs", response.example_2)
