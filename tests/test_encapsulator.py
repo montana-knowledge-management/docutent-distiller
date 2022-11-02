@@ -30,6 +30,16 @@ class TestEncapsulator(unittest.TestCase):
     server2.set_key_file_path("some_path")
     server2.set_cert_file_path("some_path")
 
+    def test_empty_input(self):
+        wrong_json = {}
+        response = self.client.post("/process", json=wrong_json, headers={"Content-Type": "application/json"})
+        self.assertIsNot(response.status_code, 200)
+        self.assertDictEqual(
+            response.json(),
+            {'status': 'failed', 'error': 'ValidationError',
+             'detail': [{'loc': ['text'], 'msg': 'field required', 'type': 'value_error.missing'}]},
+        )
+
     def test_http_ping(self):
         response = self.client.get("/ping")
         self.assertEqual(response.status_code, 200)
@@ -53,7 +63,8 @@ class TestEncapsulator(unittest.TestCase):
         self.assertIsNot(response.status_code, 200)
         self.assertDictEqual(
             response.json(),
-            {"detail": [{"loc": ["body", "text"], "msg": "field required", "type": "value_error.missing"}]},
+            {'status': 'failed', 'error': 'ValidationError',
+             'detail': [{'loc': ['text'], 'msg': 'field required', 'type': 'value_error.missing'}]},
         )
 
     def test_with_text_key_ml(self):

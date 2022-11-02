@@ -1,7 +1,9 @@
+import json
 import socket
 import unittest
 
 from importlib_resources import files
+from pydantic import BaseModel, ValidationError
 
 import docutent_distiller.ml_project as mlp
 import docutent_distiller.text_readers as r
@@ -14,6 +16,36 @@ class DummySubTask(mlp.AbstractSubTask):
 
 
 class TestMLProject(unittest.TestCase):
+    def test_validate(self):
+        class InputJson(BaseModel):
+            """
+            Class for validating the input sent to the /process endpoint for MachineLearningProject.
+            """
+            example: str
+
+        project = mlp.MachineLearningProject(valid_class=InputJson)
+        with self.assertRaises(ValidationError) as context:
+            response = project.validate({"text": "random bs"})
+
+        self.assertTrue('example' in str(context.exception))
+
+    def test_validate_modified_class(self):
+        class InputValidator(BaseModel):
+            """
+            Class for validating the input sent to the /process endpoint for MachineLearningProject.
+            """
+            example_2: str
+
+        project = mlp.MachineLearningProject()
+        project.set_validation_class(InputValidator)
+        with self.assertRaises(ValidationError) as context:
+            response = project.validate({"text": "random bs"})
+
+        self.assertTrue('example_2' in str(context.exception))
+
+        response = project.validate({"example_2": "random bs"})
+        self.assertEqual("random bs", response.example_2)
+
     def test_dummy_project_ip_helper(self):
         # tests the basic functions of an empty abstractproject
         Project = mlp.MachineLearningProject()

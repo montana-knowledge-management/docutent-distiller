@@ -1,17 +1,12 @@
-import json
 import os.path
 import subprocess
 import time
-import traceback
 from pathlib import Path
-from typing import Optional
 
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Response, status
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from importlib_resources import files
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, Extra, ValidationError
 
 from docutent_distiller.ml_project import MachineLearningProject
 
@@ -57,17 +52,25 @@ tags_metadata = [
 ]
 
 
-@app.post("/process", include_in_schema=True, tags=["process_ml"])
-async def process(item: InputJsonML):
+@app.post("/process", include_in_schema=True, tags=["process"])
+async def process(item: dict, response: Response):
     """
     Endpoint for performing the project.run() method on data sent for the API in JSON format.
     The endpoint performs automatic input validation via the Item class.
     """
-    data = json.loads(item.json())
-    if data:
-        app.project.add_single_input(data)
+    try:
+        app.project.validate(item)
+    except ValidationError as e:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {
+            "status": "failed",
+            "error": e.__class__.__name__,
+            "detail": e.errors(),
+        }
+    else:
+        app.project.add_single_input(item)
         app.project.run()
-    return app.project.get_single_output()
+        return app.project.get_single_output()
 
 
 @app.get("/ping", include_in_schema=True, tags=["ping"])
