@@ -168,7 +168,7 @@ python-versions = "*"
 
 [[package]]
 name = "exceptiongroup"
-version = "1.0.0"
+version = "1.0.1"
 description = "Backport of PEP 654 (exception groups)"
 category = "dev"
 optional = false
@@ -369,14 +369,6 @@ MarkupSafe = ">=2.0"
 i18n = ["Babel (>=2.7)"]
 
 [[package]]
-name = "joblib"
-version = "1.2.0"
-description = "Lightweight pipelining with Python functions"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-
-[[package]]
 name = "kiwisolver"
 version = "1.4.4"
 description = "A fast implementation of the Cassowary constraint solver"
@@ -416,7 +408,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "matplotlib"
-version = "3.6.1"
+version = "3.6.2"
 description = "Python plotting package"
 category = "main"
 optional = false
@@ -477,7 +469,7 @@ min-versions = ["babel (==2.9.0)", "click (==7.0)", "colorama (==0.4)", "ghp-imp
 
 [[package]]
 name = "mkdocs-material"
-version = "8.5.7"
+version = "8.5.8"
 description = "Documentation that simply works"
 category = "main"
 optional = false
@@ -487,7 +479,7 @@ python-versions = ">=3.7"
 jinja2 = ">=3.0.2"
 markdown = ">=3.2"
 mkdocs = ">=1.4.0"
-mkdocs-material-extensions = ">=1.0.3"
+mkdocs-material-extensions = ">=1.1"
 pygments = ">=2.12"
 pymdown-extensions = ">=9.4"
 requests = ">=2.26"
@@ -557,15 +549,15 @@ tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "pa
 
 [[package]]
 name = "platformdirs"
-version = "2.5.2"
-description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
+version = "2.5.3"
+description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 
 [package.extras]
-docs = ["furo (>=2021.7.5b38)", "proselint (>=0.10.2)", "sphinx-autodoc-typehints (>=1.12)", "sphinx (>=4)"]
-test = ["appdirs (==1.4.4)", "pytest-cov (>=2.7)", "pytest-mock (>=3.6)", "pytest (>=6)"]
+docs = ["furo (>=2022.9.29)", "proselint (>=0.13)", "sphinx-autodoc-typehints (>=1.19.4)", "sphinx (>=5.3)"]
+test = ["appdirs (==1.4.4)", "pytest-cov (>=4)", "pytest-mock (>=3.10)", "pytest (>=7.2)"]
 
 [[package]]
 name = "pluggy"
@@ -657,7 +649,7 @@ testutils = ["gitpython (>3)"]
 
 [[package]]
 name = "pymdown-extensions"
-version = "9.7"
+version = "9.8"
 description = "Extension pack for Python Markdown."
 category = "main"
 optional = false
@@ -757,26 +749,6 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
-name = "scikit-learn"
-version = "1.1.3"
-description = "A set of python modules for machine learning and data mining"
-category = "main"
-optional = false
-python-versions = ">=3.8"
-
-[package.dependencies]
-joblib = ">=1.0.0"
-numpy = ">=1.17.3"
-scipy = ">=1.3.2"
-threadpoolctl = ">=2.0.0"
-
-[package.extras]
-benchmark = ["matplotlib (>=3.1.2)", "pandas (>=1.0.5)", "memory-profiler (>=0.57.0)"]
-docs = ["matplotlib (>=3.1.2)", "scikit-image (>=0.16.2)", "pandas (>=1.0.5)", "seaborn (>=0.9.0)", "memory-profiler (>=0.57.0)", "sphinx (>=4.0.1)", "sphinx-gallery (>=0.7.0)", "numpydoc (>=1.2.0)", "Pillow (>=7.1.2)", "sphinx-prompt (>=1.3.0)", "sphinxext-opengraph (>=0.4.2)"]
-examples = ["matplotlib (>=3.1.2)", "scikit-image (>=0.16.2)", "pandas (>=1.0.5)", "seaborn (>=0.9.0)"]
-tests = ["matplotlib (>=3.1.2)", "scikit-image (>=0.16.2)", "pandas (>=1.0.5)", "pytest (>=5.0.1)", "pytest-cov (>=2.9.0)", "flake8 (>=3.8.2)", "black (>=22.3.0)", "mypy (>=0.961)", "pyamg (>=4.0.0)", "numpydoc (>=1.2.0)"]
-
-[[package]]
 name = "scipy"
 version = "1.9.3"
 description = "Fundamental algorithms for scientific computing in Python"
@@ -819,14 +791,11 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "sklearn"
-version = "0.0"
-description = "A set of python modules for machine learning and data mining"
+version = "0.0.post1"
+description = "deprecated sklearn package, use scikit-learn instead"
 category = "main"
 optional = false
 python-versions = "*"
-
-[package.dependencies]
-scikit-learn = "*"
 
 [[package]]
 name = "smart-open"
@@ -867,14 +836,6 @@ typing-extensions = {version = ">=3.10.0", markers = "python_version < \"3.10\""
 
 [package.extras]
 full = ["itsdangerous", "jinja2", "python-multipart", "pyyaml", "requests"]
-
-[[package]]
-name = "threadpoolctl"
-version = "3.1.0"
-description = "threadpoolctl"
-category = "main"
-optional = false
-python-versions = ">=3.6"
 
 [[package]]
 name = "tika"
@@ -1055,7 +1016,6 @@ importlib-resources = []
 iniconfig = []
 isort = []
 jinja2 = []
-joblib = []
 kiwisolver = []
 lazy-object-proxy = []
 markdown = []
@@ -1087,7 +1047,6 @@ pyupgrade = []
 pyyaml = []
 pyyaml-env-tag = []
 requests = []
-scikit-learn = []
 scipy = []
 setuptools-scm = []
 six = []
@@ -1095,7 +1054,6 @@ sklearn = []
 smart-open = []
 sniffio = []
 starlette = []
-threadpoolctl = []
 tika = []
 tokenize-rt = []
 toml = []
