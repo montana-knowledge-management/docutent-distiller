@@ -30,6 +30,9 @@ class BertLongPreprocessor:
         :param text: Text for embedding
         :return: Embeddings from huBERT
         """
+        if text == "":
+            return np.zeros(1, )
+
         self.generate_matrix = matrix
         self.tokens = self.tokenizer.encode_plus(text,
                                             add_special_tokens=False)  # self.tokeinzer(text, add_special_tokens=False)

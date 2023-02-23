@@ -1,6 +1,8 @@
 
 import unittest
 
+import numpy as np
+
 from docutent_distiller.long_document_embedder import BertLongPreprocessor
 from transformers import logging
 
@@ -73,6 +75,12 @@ a magyar állam, országos nemzetiségi önkormányzat,  b) * az egyházi jogi s
 
 short_text = "Teszt mondat."
 class LongVectorizerTestCase(unittest.TestCase):
+
+    def test_segmentation_empty(self):
+        vectorizer = BertLongPreprocessor(510)
+        result = vectorizer.vectorize("")
+        expected = np.array([0])
+        self.assertTrue(np.equal(result, expected))
 
     def test_segmentation_short_matrix(self):
         vectorizer = BertLongPreprocessor(510)
