@@ -7,21 +7,17 @@ from transformers import AutoTokenizer, AutoModel
 
 class BertLongPreprocessor:
 
-    def __init__(self, max_segment_length):
-        self.tokenizer = AutoTokenizer.from_pretrained("SZTAKI-HLT/hubert-base-cc")
-        self.model = AutoModel.from_pretrained("SZTAKI-HLT/hubert-base-cc")
-        if max_segment_length > 510:
-            self.max_segment_length = 510
-            raise UserWarning("Maximum length should be 510>= in order to properly create segments! Set to 510 (max "
-                              "value)!")
-        self.max_segment_length = max_segment_length
+    def __init__(self, model_name = "SZTAKI-HLT/hubert-base-cc"):
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = AutoModel.from_pretrained(model_name)
+        self.max_segment_length = self.model.config.max_position_embeddings - 2
         self.slices = []
         self.embedddings = None
         self.tokens = None
         self.connected_sw_tokens = None
         self.slicing_points = None
 
-    def vectorize(self, text, matrix=True) -> np.ndarray:
+    def vectorize(self, text:str, matrix=True) -> np.ndarray:
         """
         Creates embeddings with huBERT model. If :param text: is longer than 510 subword level tokens, slices it into
         max. 510 subword-level token pieces (at word limits), then creates CLS token embeddings to these slices.
@@ -113,6 +109,6 @@ class BertLongPreprocessor:
         return slice_end_positions
 
 if __name__ == '__main__':
-    vectorizer = BertLongPreprocessor(510)
+    vectorizer = BertLongPreprocessor()
     vectorizer.vectorize("Teszt mondat.")
     print()
