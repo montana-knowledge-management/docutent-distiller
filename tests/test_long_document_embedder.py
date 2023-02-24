@@ -75,49 +75,49 @@ a magyar állam, országos nemzetiségi önkormányzat,  b) * az egyházi jogi s
 
 short_text = "Teszt mondat."
 class LongVectorizerTestCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.short_vectorizer = BertLongVectorizer()
+        cls.long_vectorizer = BertLongVectorizer()
+        cls.short_matrix = cls.short_vectorizer.vectorize(short_text, matrix=True)
+        cls.long_matrix = cls.long_vectorizer.vectorize(long_text, matrix=True)
+        cls.short_average = cls.short_vectorizer.vectorize(short_text, matrix=False)
+        cls.long_average = cls.long_vectorizer.vectorize(long_text, matrix=False)
 
+    def test_short_matrix_mean_equality(self):
+        self.assertTrue(np.allclose(self.short_matrix, self.short_average))
 
-    def test_initialize(self):
-        vectorizer = BertLongVectorizer()
+    def test_long_matrix_mean_equality(self):
+        self.assertTrue(np.allclose(self.long_matrix.mean(axis=0), self.long_average))
+
     def test_segmentation_empty(self):
-        vectorizer = BertLongVectorizer()
-        result = vectorizer.vectorize("")
+        result = self.short_vectorizer.vectorize("")
         expected = np.array([0])
         self.assertTrue(np.equal(result, expected))
 
     def test_segmentation_short_matrix(self):
-        vectorizer = BertLongVectorizer()
-        matrix = vectorizer.vectorize(short_text, matrix=True)
-        self.assertEqual(matrix.shape, (768,))
+        self.assertEqual(self.short_matrix.shape, (768,))
 
     def test_segmentation_short_mean(self):
-        vectorizer = BertLongVectorizer()
-        mean_vector = vectorizer.vectorize(short_text, matrix=False)
-        self.assertEqual(mean_vector.shape, (768,))
+        self.assertEqual(self.short_average.shape, (768,))
 
     def test_segmentation_short_class_variables(self):
-        vectorizer = BertLongVectorizer()
-        _ = vectorizer.vectorize(short_text, matrix=True)
-        self.assertEqual(len(vectorizer.connected_sw_tokens), 3)
-        self.assertEqual(vectorizer.slicing_points[0], 2)
-        self.assertEqual(len(vectorizer.slices), 1)
+        _ = self.short_vectorizer.vectorize(short_text, matrix=True)
+        self.assertEqual(len(self.short_vectorizer.connected_sw_tokens), 3)
+        self.assertEqual(self.short_vectorizer.slicing_points[0], 2)
+        self.assertEqual(len(self.short_vectorizer.slices), 1)
 
     def test_segmentation_long_matrix(self):
-        vectorizer = BertLongVectorizer()
-        matrix = vectorizer.vectorize(long_text, matrix=True)
-        self.assertEqual(matrix.shape, (3, 768))
+        self.assertEqual(self.long_matrix.shape, (3, 768))
 
     def test_segmentation_long_mean(self):
-        vectorizer = BertLongVectorizer()
-        mean_vector = vectorizer.vectorize(long_text, matrix=False)
-        self.assertEqual(mean_vector.shape, (768,))
+        self.assertEqual(self.long_average.shape, (768,))
 
     def test_segmentation_long_class_variables(self):
-        vectorizer = BertLongVectorizer()
-        _ = vectorizer.vectorize(long_text, matrix=True)
-        self.assertEqual(len(vectorizer.connected_sw_tokens), 1276)
-        self.assertEqual(len(vectorizer.slices), 3)
-        self.assertEqual(vectorizer.slicing_points, [509, 1018, 1275])
+        _ = self.long_vectorizer.vectorize(long_text, matrix=True)
+        self.assertEqual(len(self.long_vectorizer.connected_sw_tokens), 1276)
+        self.assertEqual(len(self.long_vectorizer.slices), 3)
+        self.assertEqual(self.long_vectorizer.slicing_points, [509, 1018, 1275])
 
 
 if __name__ == "__main__":
