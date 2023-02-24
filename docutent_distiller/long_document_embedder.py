@@ -5,7 +5,7 @@ import torch
 from transformers import AutoTokenizer, AutoModel
 
 
-class BertLongPreprocessor:
+class BertLongVectorizer:
 
     def __init__(self, model_name = "SZTAKI-HLT/hubert-base-cc"):
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -109,6 +109,6 @@ class BertLongPreprocessor:
         return slice_end_positions
 
 if __name__ == '__main__':
-    vectorizer = BertLongPreprocessor()
+    vectorizer = BertLongVectorizer()
     vectorizer.vectorize("Teszt mondat.")
     print()

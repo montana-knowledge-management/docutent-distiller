@@ -3,7 +3,7 @@ import unittest
 
 import numpy as np
 
-from docutent_distiller.long_document_embedder import BertLongPreprocessor
+from docutent_distiller.long_document_embedder import BertLongVectorizer
 from transformers import logging
 
 logging.set_verbosity_error()
@@ -76,41 +76,44 @@ a magyar állam, országos nemzetiségi önkormányzat,  b) * az egyházi jogi s
 short_text = "Teszt mondat."
 class LongVectorizerTestCase(unittest.TestCase):
 
+
+    def test_initialize(self):
+        vectorizer = BertLongVectorizer()
     def test_segmentation_empty(self):
-        vectorizer = BertLongPreprocessor(510)
+        vectorizer = BertLongVectorizer()
         result = vectorizer.vectorize("")
         expected = np.array([0])
         self.assertTrue(np.equal(result, expected))
 
     def test_segmentation_short_matrix(self):
-        vectorizer = BertLongPreprocessor(510)
+        vectorizer = BertLongVectorizer()
         matrix = vectorizer.vectorize(short_text, matrix=True)
         self.assertEqual(matrix.shape, (768,))
 
     def test_segmentation_short_mean(self):
-        vectorizer = BertLongPreprocessor(510)
+        vectorizer = BertLongVectorizer()
         mean_vector = vectorizer.vectorize(short_text, matrix=False)
         self.assertEqual(mean_vector.shape, (768,))
 
     def test_segmentation_short_class_variables(self):
-        vectorizer = BertLongPreprocessor(510)
+        vectorizer = BertLongVectorizer()
         _ = vectorizer.vectorize(short_text, matrix=True)
         self.assertEqual(len(vectorizer.connected_sw_tokens), 3)
         self.assertEqual(vectorizer.slicing_points[0], 2)
         self.assertEqual(len(vectorizer.slices), 1)
 
     def test_segmentation_long_matrix(self):
-        vectorizer = BertLongPreprocessor(510)
+        vectorizer = BertLongVectorizer()
         matrix = vectorizer.vectorize(long_text, matrix=True)
         self.assertEqual(matrix.shape, (3, 768))
 
     def test_segmentation_long_mean(self):
-        vectorizer = BertLongPreprocessor(510)
+        vectorizer = BertLongVectorizer()
         mean_vector = vectorizer.vectorize(long_text, matrix=False)
         self.assertEqual(mean_vector.shape, (768,))
 
     def test_segmentation_long_class_variables(self):
-        vectorizer = BertLongPreprocessor(510)
+        vectorizer = BertLongVectorizer()
         _ = vectorizer.vectorize(long_text, matrix=True)
         self.assertEqual(len(vectorizer.connected_sw_tokens), 1276)
         self.assertEqual(len(vectorizer.slices), 3)
