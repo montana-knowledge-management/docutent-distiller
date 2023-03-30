@@ -5,11 +5,14 @@ import torch
 from transformers import AutoTokenizer, AutoModel
 
 
+
 class BertLongVectorizer:
 
     def __init__(self, model_name = "SZTAKI-HLT/hubert-base-cc"):
+        self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModel.from_pretrained(model_name)
+        self.model = self.model.to(self.device)
         self.max_segment_length = self.model.config.max_position_embeddings - 2
         self.slices = []
         self.embedddings = None
@@ -31,7 +34,7 @@ class BertLongVectorizer:
 
         self.generate_matrix = matrix
         self.tokens = self.tokenizer.encode_plus(text,
-                                            add_special_tokens=False)  # self.tokeinzer(text, add_special_tokens=False)
+                                            add_special_tokens=False).to(self.device)  # self.tokeinzer(text, add_special_tokens=False)
 
         word_ends = self._search_word_ends()
         self.slicing_points = self._search_slicing_points(word_ends)
