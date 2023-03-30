@@ -36,7 +36,7 @@ class BertVectorizerCLS:
         self.model.eval()
         # tokenized_simple = self.tokenizer.encode_plus(list_of_texts, add_special_tokens=True, truncation=True, max_length=512)
         tokenized = np.array(
-            [self.tokenizer.encode(text, add_special_tokens=True, truncation=True).to(self.device) for text in list_of_texts]
+            [self.tokenizer.encode(text, add_special_tokens=True, truncation=True) for text in list_of_texts]
         )
         MODEL_MAX_LEN = 512
         max_len = 0
@@ -52,8 +52,8 @@ class BertVectorizerCLS:
 
         attention_mask = np.where(padded != 0, 1, 0)
 
-        input_ids = torch.tensor(padded)
-        attention_mask = torch.tensor(attention_mask)
+        input_ids = torch.tensor(padded).to(self.device)
+        attention_mask = torch.tensor(attention_mask).to(self.device)
 
         with torch.no_grad():
             last_hidden_states = self.model(input_ids, attention_mask=attention_mask)
