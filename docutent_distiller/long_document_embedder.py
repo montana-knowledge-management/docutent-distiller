@@ -34,7 +34,7 @@ class BertLongVectorizer:
 
         self.generate_matrix = matrix
         self.tokens = self.tokenizer.encode_plus(text,
-                                            add_special_tokens=False).to(self.device)  # self.tokeinzer(text, add_special_tokens=False)
+                                            add_special_tokens=False)  # self.tokeinzer(text, add_special_tokens=False)
 
         word_ends = self._search_word_ends()
         self.slicing_points = self._search_slicing_points(word_ends)
@@ -77,8 +77,8 @@ class BertLongVectorizer:
             input_ids.append(input_ids_chunk)
             attention_masks.append(attention_mask_chunk)
 
-        input_ids = torch.tensor(input_ids)
-        attention_mask = torch.tensor(attention_masks)
+        input_ids = torch.tensor(input_ids).to(self.device)
+        attention_mask = torch.tensor(attention_masks).to(self.device)
 
         # input_ids: egy tensor-ban a slice-ok input id-i (attention_mask szintén! )
         with torch.no_grad():
