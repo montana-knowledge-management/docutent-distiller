@@ -11,12 +11,14 @@ from tqdm import tqdm
 
 class BertVectorizerCLS:
     def __init__(self):
+        self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         self.tokenizer = BertTokenizer.from_pretrained("SZTAKI-HLT/hubert-base-cc")
         self.model = BertModel.from_pretrained(
             "SZTAKI-HLT/hubert-base-cc",
             output_hidden_states=True,
             # Whether the model returns all hidden-states.
         )
+        self.model = self.model.to(self.device)
 
     def get_tokens_number(self, text: str, return_tokens=False) -> Union[int, Tuple[int, list]]:
 
@@ -34,7 +36,7 @@ class BertVectorizerCLS:
         self.model.eval()
         # tokenized_simple = self.tokenizer.encode_plus(list_of_texts, add_special_tokens=True, truncation=True, max_length=512)
         tokenized = np.array(
-            [self.tokenizer.encode(text, add_special_tokens=True, truncation=True) for text in list_of_texts]
+            [self.tokenizer.encode(text, add_special_tokens=True, truncation=True).to(self.device) for text in list_of_texts]
         )
         MODEL_MAX_LEN = 512
         max_len = 0
