@@ -57,7 +57,7 @@ class BertVectorizerCLS:
 
         with torch.no_grad():
             last_hidden_states = self.model(input_ids, attention_mask=attention_mask)
-            features = last_hidden_states[0][:, 0, :].numpy()
+            features = last_hidden_states[0][:, 0, :].cpu().numpy()
             return features
 
     def get_encoding_dict(self, input_text: str):

@@ -83,7 +83,7 @@ class BertLongVectorizer:
         # input_ids: egy tensor-ban a slice-ok input id-i (attention_mask szintén! )
         with torch.no_grad():
             last_hidden_states = self.model(input_ids, attention_mask=attention_mask)
-            features = last_hidden_states[0][:, 0, :].numpy()
+            features = last_hidden_states[0][:, 0, :].cpu().numpy()
             features = np.squeeze(features)
 
         if self.generate_matrix:
