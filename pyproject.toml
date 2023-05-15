@@ -69,7 +69,7 @@ quiet = true
 # https://coverage.readthedocs.io/en/6.1.1/config.html
 
 [tool.coverage.run]
-command_line = "-m py.test"
+command_line = "-m pytest"
 source = ['docutent_distiller']
 branch = true
 # omit = []
