@@ -33,7 +33,7 @@ mkdocs-material = "^8.3.9"
 # list all devtools here
 scikit-learn = "^1.2.2"
 urllib3 = "<2"
-requests = "2.29"
+requests = "<=2.29"
 [tool.poetry.dev-dependencies]
 black = "*"
 coverage = "*"
