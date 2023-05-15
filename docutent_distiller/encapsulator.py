@@ -68,9 +68,17 @@ async def process(item: dict, response: Response):
             "detail": e.errors(),
         }
     else:
-        app.project.add_single_input(item)
-        app.project.run()
-        return app.project.get_single_output()
+        try:
+            app.project.add_single_input(item)
+            app.project.run()
+            return app.project.get_single_output()
+        except Exception as e:
+            response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+            return {
+                "status": "failed",
+                "error": e.__class__.__name__,
+                "detail": e.errors(),
+            }
 
 
 @app.get("/ping", include_in_schema=True, tags=["ping"])
