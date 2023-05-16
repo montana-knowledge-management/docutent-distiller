@@ -77,7 +77,7 @@ async def process(item: dict, response: Response):
             return {
                 "status": "failed",
                 "error": e.__class__.__name__,
-                "detail": e.errors(),
+                "detail": repr(e),
             }
 
 
