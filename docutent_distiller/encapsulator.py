@@ -73,7 +73,7 @@ async def process(item: dict, response: Response):
             app.project.run()
             return app.project.get_single_output()
         except Exception as e:
-            response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+            response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
             return {
                 "status": "failed",
                 "error": e.__class__.__name__,
