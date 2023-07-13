@@ -36,7 +36,8 @@ class BertVectorizerCLS:
         self.model.eval()
         # tokenized_simple = self.tokenizer.encode_plus(list_of_texts, add_special_tokens=True, truncation=True, max_length=512)
         tokenized = np.array(
-            [self.tokenizer.encode(text, add_special_tokens=True, truncation=True) for text in list_of_texts]
+            [self.tokenizer.encode(text, add_special_tokens=True, truncation=True) for text in list_of_texts],
+            dtype=object
         )
         MODEL_MAX_LEN = 512
         max_len = 0
