@@ -4,12 +4,24 @@ import time
 from pathlib import Path
 
 import uvicorn
-from fastapi import FastAPI, Response, status
+from fastapi import FastAPI, Response, status, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Extra, ValidationError
 
 from docutent_distiller.ml_project import MachineLearningProject
 
+import logging
+
+log_config = uvicorn.config.LOGGING_CONFIG
+log_config["formatters"]["default"]["use_colors"] = True
+log_config["formatters"]["access"]["use_colors"] = True
+
+log_config["formatters"]["access"]["fmt"] = '%(asctime)s - %(levelprefix)s %(client_addr)s - %(status_code)s - %(message)s'#"%(asctime)s - %(levelprefix)s - %(message)s" \
+
+log_config["formatters"]["default"]["fmt"] = "%(asctime)s - %(levelprefix)s - %(message)s" #'%(asctime)s - %(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s - %(message)s'#"%(asctime)s - %(levelprefix)s - %(message)s"
+log_config["loggers"]["uvicorn.error"]["level"] = "ERROR"
+
+logger = logging.getLogger("uvicorn")
 
 class InputJsonML(BaseModel):
     """
@@ -61,6 +73,7 @@ async def process(item: dict, response: Response):
     try:
         app.project.validate(item)
     except ValidationError as e:
+        logger.warn(f"Input validation failed: {e.json()}")
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {
             "status": "failed",
@@ -175,4 +188,4 @@ class Encapsulator:
 
 
 if __name__ == "__main__":
-    uvicorn.run("server:app", host="127.0.0.1", port=5000, log_level="info")
+    uvicorn.run("server:app", host="127.0.0.1", port=5000, log_config=log_config)
