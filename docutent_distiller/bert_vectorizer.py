@@ -35,23 +35,11 @@ class BertVectorizerCLS:
     def get_cls_token_embedding(self, list_of_texts: List[str]):
         self.model.eval()
         # tokenized_simple = self.tokenizer.encode_plus(list_of_texts, add_special_tokens=True, truncation=True, max_length=512)
-        tokenized = np.array(
-            [self.tokenizer.encode(text, add_special_tokens=True, truncation=True) for text in list_of_texts],
-            dtype=object
-        )
-        MODEL_MAX_LEN = 512
-        max_len = 0
-        for i in tokenized:
-            if len(i) > max_len:
-                max_len = len(i)
-        if max_len > MODEL_MAX_LEN:
-            max_len = MODEL_MAX_LEN
 
-        padded = np.array(
-            [list(i) + [0] * (max_len - len(i)) if len(i) < MODEL_MAX_LEN else i[:MODEL_MAX_LEN] for i in tokenized]
-        )
+        tokenizer_output = self.tokenizer(list_of_texts, add_special_tokens=True, truncation=True, padding=True)
 
-        attention_mask = np.where(padded != 0, 1, 0)
+        padded = tokenizer_output['input_ids']
+        attention_mask = tokenizer_output['attention_mask']
 
         input_ids = torch.tensor(padded).to(self.device)
         attention_mask = torch.tensor(attention_mask).to(self.device)
