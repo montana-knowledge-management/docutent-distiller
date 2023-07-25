@@ -36,7 +36,7 @@ class BertVectorizerCLS:
         self.model.eval()
         # tokenized_simple = self.tokenizer.encode_plus(list_of_texts, add_special_tokens=True, truncation=True, max_length=512)
 
-        tokenizer_output = self.tokenizer(list_of_texts, add_special_tokens=True, truncation=True, padding=True)
+        tokenizer_output = self.tokenizer(list_of_texts, add_special_tokens=True, truncation=True, padding=True, max_length=512)
 
         padded = tokenizer_output['input_ids']
         attention_mask = tokenizer_output['attention_mask']
