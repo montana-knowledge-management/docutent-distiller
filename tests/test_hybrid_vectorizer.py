@@ -25,6 +25,30 @@ class MyTestCase(unittest.TestCase):
         long_vec = self.vectorizer.vectorize([text])[0]
         self.assertFalse(np.allclose(short_vec, long_vec, atol=1e-5))
 
+    def test_get_vector_str(self):
+        text = "Ez egy {} hosszú mondat.".format(
+            " ".join(["igen nagyon fű de nagyon tartalmas és unalmas és hosszú"] * 100)
+        )
+        vector = self.vectorizer.get_vector(text)
+
+        self.assertEqual(vector.shape, (768,))
+
+    def test_get_vector_list(self):
+        text = "Ez egy {} hosszú mondat.".format(
+            " ".join(["igen nagyon fű de nagyon tartalmas és unalmas és hosszú"] * 100)
+        )
+        vector = self.vectorizer.get_vector([text, text], sentence_avg=False)
+
+        self.assertEqual(vector.shape, (2, 768))
+
+    def test_get_vector_list_avg(self):
+        text = "Ez egy {} hosszú mondat.".format(
+            " ".join(["igen nagyon fű de nagyon tartalmas és unalmas és hosszú"] * 100)
+        )
+        vector = self.vectorizer.get_vector([text, text], sentence_avg=True)
+
+        self.assertEqual(vector.shape, (768,))
+
     def test_batching(self):
         sentences = [
             "Ez egy teszt mondat.",
