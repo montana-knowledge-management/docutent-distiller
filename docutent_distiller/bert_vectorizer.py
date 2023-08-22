@@ -1,12 +1,8 @@
-import json
-import os
 from typing import List, Tuple, Union
 
-import matplotlib.pylab as plt
 import numpy as np
 import torch
 from transformers import BertModel, BertTokenizer
-from tqdm import tqdm
 
 
 class BertVectorizerCLS:
@@ -21,7 +17,6 @@ class BertVectorizerCLS:
         self.model = self.model.to(self.device)
 
     def get_tokens_number(self, text: str, return_tokens=False) -> Union[int, Tuple[int, list]]:
-
         tokenized_input = self.tokenizer.tokenize(text)
         if return_tokens:
             tokens, readables = ([], [])
@@ -36,10 +31,12 @@ class BertVectorizerCLS:
         self.model.eval()
         # tokenized_simple = self.tokenizer.encode_plus(list_of_texts, add_special_tokens=True, truncation=True, max_length=512)
 
-        tokenizer_output = self.tokenizer(list_of_texts, add_special_tokens=True, truncation=True, padding=True, max_length=512)
+        tokenizer_output = self.tokenizer(
+            list_of_texts, add_special_tokens=True, truncation=True, padding=True, max_length=512
+        )
 
-        padded = tokenizer_output['input_ids']
-        attention_mask = tokenizer_output['attention_mask']
+        padded = tokenizer_output["input_ids"]
+        attention_mask = tokenizer_output["attention_mask"]
 
         input_ids = torch.tensor(padded).to(self.device)
         attention_mask = torch.tensor(attention_mask).to(self.device)
@@ -48,6 +45,14 @@ class BertVectorizerCLS:
             last_hidden_states = self.model(input_ids, attention_mask=attention_mask)
             features = last_hidden_states[0][:, 0, :].cpu().numpy()
             return features
+
+    def get_vector(self, sentences: Union[List[str], str], sentence_avg: bool = True):
+        if type(sentences) == str:
+            sentences = [sentences]
+        vectors = self.get_cls_token_embedding(sentences)
+        if sentence_avg:
+            return np.array(vectors).mean(axis=0)
+        return vectors
 
     def get_encoding_dict(self, input_text: str):
         """
